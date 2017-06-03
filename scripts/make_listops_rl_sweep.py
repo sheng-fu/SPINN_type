@@ -9,8 +9,8 @@ import gflags
 import sys
 
 NYU_NON_PBS = False
-NAME = "05_22_real"
-SWEEP_RUNS = 32
+NAME = "06_01_ws"
+SWEEP_RUNS = 4
 
 LIN = "LIN"
 EXP = "EXP"
@@ -20,8 +20,8 @@ SS_BASE = "SS_BASE"
 
 FLAGS = gflags.FLAGS
 
-gflags.DEFINE_string("training_data_path", "spinn/data/listops/train_d20a.tsv", "")
-gflags.DEFINE_string("eval_data_path", "spinn/data/listops/test_d20a.tsv", "")
+gflags.DEFINE_string("training_data_path", "spinn/data/listops/train_d20s.tsv", "")
+gflags.DEFINE_string("eval_data_path", "spinn/data/listops/test_d20s.tsv", "")
 gflags.DEFINE_string("log_path", "/home/sb6065/logs/spinn", "")
 gflags.DEFINE_string("metrics_path", "/home/sb6065/logs/spinn-runs", "")
 
@@ -44,8 +44,8 @@ FIXED_PARAMETERS = {
     "log_path": FLAGS.log_path,
     "metrics_path": FLAGS.metrics_path,
     "ckpt_path":  FLAGS.log_path,
-    "word_embedding_dim":   "32",
-    "model_dim":   "32",
+    "word_embedding_dim":   "128",
+    "model_dim":   "128",
     "seq_length":   "100",
     "eval_seq_length":  "3000",
     "use_internal_parser": "",
@@ -55,7 +55,7 @@ FIXED_PARAMETERS = {
     "transition_weight": "1",
     "embedding_keep_rate": "1.0",
     "semantic_classifier_keep_rate": "1.0",
-    "rl_reward": "xent",
+    "rl_reward": "standard",
     "num_samples": "1",
     "nolateral_tracking": "",
     "encode": "pass",
@@ -63,16 +63,16 @@ FIXED_PARAMETERS = {
 
 # Tunable parameters.
 SWEEP_PARAMETERS = {
-    "rl_weight":  ("rlwt", EXP, 2.0, 100.0),
-    "learning_rate":      ("lr", EXP, 0.003, 0.09),
-    "l2_lambda":          ("l2", EXP, 8e-7, 1e-4),
-    "learning_rate_decay_per_10k_steps": ("dec", EXP, 0.3, 1.0),
-    #"rl_wake_sleep": ("ws", BOOL, None, None),
+    "rl_weight":  ("rlwt", EXP, 1.0, 50.0),
+    "learning_rate":      ("lr", EXP, 0.001, 0.01),
+    "l2_lambda":          ("l2", EXP, 8e-7, 1e-5),
+    "learning_rate_decay_per_10k_steps": ("dec", EXP, 0.4, 1.0),
+    "rl_wake_sleep": ("ws", BOOL, None, None),
     "rl_epsilon": ("eps", LIN, 0.05, 1.0),
     "rl_epsilon_decay": ("epsd", EXP, 1000, 100000),
-    #"rl_confidence_penalty": ("rlconf", EXP, 0.00001, 10.0),
-    #"rl_confidence_interval": ("rlconfint", EXP, 10, 1000),
-    "rl_reward": ("rew", CHOICE, ["standard", "xent"], None),
+    "rl_confidence_penalty": ("rlconf", EXP, 0.00001, 10.0),
+    "rl_confidence_interval": ("rlconfint", EXP, 10, 1000),
+    "rl_baseline": ("base", CHOICE, ['ema', 'value'], None)
 }
 
 sweep_name = "sweep_" + NAME + "_" + \

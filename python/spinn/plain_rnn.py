@@ -13,7 +13,7 @@ from spinn.util.misc import Args, Vocab
 def build_model(data_manager, initial_embeddings, vocab_size,
                 num_classes, FLAGS, context_args, composition_args):
     use_sentence_pair = data_manager.SENTENCE_PAIR_DATA
-    model_cls = BaseModel
+    model_cls = RNNModel
 
     return model_cls(model_dim=FLAGS.model_dim,
                      word_embedding_dim=FLAGS.word_embedding_dim,
@@ -32,7 +32,7 @@ def build_model(data_manager, initial_embeddings, vocab_size,
                      )
 
 
-class BaseModel(nn.Module):
+class RNNModel(nn.Module):
 
     def __init__(self, model_dim=None,
                  word_embedding_dim=None,
@@ -48,7 +48,7 @@ class BaseModel(nn.Module):
                  context_args=None,
                  **kwargs
                  ):
-        super(BaseModel, self).__init__()
+        super(RNNModel, self).__init__()
 
         self.use_sentence_pair = use_sentence_pair
         self.model_dim = model_dim
@@ -107,8 +107,8 @@ class BaseModel(nn.Module):
         return embeds
 
     def forward(self, sentences, transitions, y_batch=None, **kwargs):
-        # Useful when investigating dynamic batching.
-        self.seq_lengths = sentences.shape[1] - (sentences == 0).sum(1)
+        # Useful when investigating dynamic batching:
+        # self.seq_lengths = sentences.shape[1] - (sentences == 0).sum(1)
 
         x = self.unwrap(sentences, transitions)
         emb = self.run_embed(x)
