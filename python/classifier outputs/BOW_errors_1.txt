@@ -1,0 +1,11 @@
+/home/sfw268/.conda/envs/nlu/lib/python3.6/site-packages/sklearn/linear_model/sag.py:326: ConvergenceWarning: The max_iter was reached which means the coef_ did not converge
+  "the coef_ did not converge", ConvergenceWarning)
+Loading ../../../snli_1.0/snli_1.0_dev.jsonl
+Normalized confusion matrix
+[[0.91113727 0.04428424 0.04457849]
+ [0.11667685 0.78268173 0.10064142]
+ [0.11423519 0.07727675 0.80848806]]
+Normalized confusion matrix
+[[0.91864058 0.04972782 0.0316316 ]
+ [0.07544288 0.86331704 0.06124007]
+ [0.06666667 0.08558798 0.84774536]]

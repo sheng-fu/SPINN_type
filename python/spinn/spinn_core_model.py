@@ -182,7 +182,7 @@ class SPINN(nn.Module):
                 "All sentences (including cropped) must be the appropriate length."
 
         self.bufs = example.bufs
-
+        self.reduced_list = []
         # Notes on adding zeros to bufs/stacks.
         # - After the buffer is consumed, we need one zero on the buffer
         #   used as input to the tracker.
@@ -327,6 +327,7 @@ class SPINN(nn.Module):
             for stack in stacks:
                 new_stack_item = next(reduced)
                 stack.append(new_stack_item)
+                self.reduced_list.append(new_stack_item.cpu().data.numpy())       
 
     def reduce_phase_hook(self, lefts, rights, trackings, reduce_stacks):
         pass
@@ -398,6 +399,7 @@ class SPINN(nn.Module):
                     transition_inp = torch.cat(transition_inp, 1)
 
                     transition_output = self.transition_net(transition_inp)
+                    #transition_output = transition_inp
 
                 if hasattr(self, 'transition_net') and run_internal_parser:
 
@@ -815,3 +817,6 @@ class BaseModel(nn.Module):
                 assert len(stack) == 1
                 token_sequences.append(stack[0])
         return token_sequences
+
+    def get_reduced_list(self):
+        return self.spinn.reduced_list

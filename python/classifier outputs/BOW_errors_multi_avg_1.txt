@@ -1,0 +1,3 @@
+/home/sfw268/.conda/envs/nlu/lib/python3.6/site-packages/sklearn/neural_network/multilayer_perceptron.py:564: ConvergenceWarning: Stochastic Optimizer: Maximum iterations (500) reached and the optimization hasn't converged yet.
+  % self.max_iter, ConvergenceWarning)
+Loading ../../../snli_1.0/snli_1.0_dev.jsonl

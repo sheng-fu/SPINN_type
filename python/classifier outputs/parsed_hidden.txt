@@ -1,0 +1,2 @@
+sanity check
+Loading ../../../snli_1.0/snli_1.0_dev.jsonl

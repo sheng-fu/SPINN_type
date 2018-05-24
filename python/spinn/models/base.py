@@ -152,7 +152,7 @@ def load_data_and_embeddings(
     # pad.
     logger.Log("Preprocessing training data.")
     if raw_training_data is not None:
-        training_data = util.PreprocessDataset(
+        training_data = util.PreprocessDataset(    
             raw_training_data,
             vocabulary,
             FLAGS.seq_length,
@@ -663,6 +663,7 @@ def init_model(
     composition_args.size = FLAGS.model_dim
     composition_args.tracker_size = FLAGS.tracking_lstm_hidden_dim
     composition_args.use_internal_parser = FLAGS.use_internal_parser
+    #composition_args.transition_weight = None
     composition_args.transition_weight = FLAGS.transition_weight
     composition_args.wrap_items = lambda x: torch.cat(x, 0)
     composition_args.extract_h = lambda x: x

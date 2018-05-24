@@ -18,10 +18,10 @@ SS_BASE = "SS_BASE"
 
 FLAGS = gflags.FLAGS
 
-gflags.DEFINE_string("training_data_path", "/home/sb6065/snli_1.0/snli_1.0_train.jsonl", "")
-gflags.DEFINE_string("eval_data_path", "/home/sb6065/snli_1.0/snli_1.0_dev.jsonl", "")
-gflags.DEFINE_string("embedding_data_path", "/home/sb6065/glove/glove.840B.300d.txt", "")
-gflags.DEFINE_string("log_path", "/home/sb6065/logs", "")
+gflags.DEFINE_string("training_data_path", "/scratch/sfw268/snli_1.0/snli_1.0_train.jsonl", "")
+gflags.DEFINE_string("eval_data_path", "/scratch/sfw268/snli_1.0/snli_1.0_dev.jsonl", "")
+gflags.DEFINE_string("embedding_data_path", "/scratch/sfw268/glove/glove.840B.300d.txt", "")
+gflags.DEFINE_string("log_path", "/scratch/sfw268/logs", "")
 
 FLAGS(sys.argv)
 
@@ -35,8 +35,8 @@ FLAGS(sys.argv)
 # Non-tunable flags that must be passed in.
 
 FIXED_PARAMETERS = {
-    "data_type":     "snli",
-    "model_type":      "RLSPINN",
+    "data_type":     "nli",
+    "model_type":      "SPINN",
     "training_data_path":    FLAGS.training_data_path,
     "eval_data_path":    FLAGS.eval_data_path,
     "embedding_data_path": FLAGS.embedding_data_path,
@@ -50,12 +50,11 @@ FIXED_PARAMETERS = {
     "statistics_interval_steps": "1000",
     "use_internal_parser": "",
     "batch_size":  "64",
-    "use_encode": "",
+    "encode": "projection",
     "encode_reverse": "",
     "noencode_bidirectional": "",
     "num_mlp_layers": "2",
-    "transition_weight": "1.0",
-    "rl_entropy": "",
+    "transition_weight": "None",
 }
 
 # Tunable parameters.
@@ -66,8 +65,6 @@ SWEEP_PARAMETERS = {
     "embedding_keep_rate": ("ekr", LIN, 0.7, 0.95),
     "learning_rate_decay_when_no_progress": ("dec", EXP, 0.5, 1.0),
     "tracking_lstm_hidden_dim": ("tdim", EXP, 24, 128),
-    "rl_weight":  ("rlwt", EXP, 0.00001, 0.01),
-    "rl_entropy_beta": ("rle", EXP, 0.00001, 0.1)
 }
 
 sweep_name = "sweep_" + NAME + "_" + \

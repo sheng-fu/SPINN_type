@@ -7,6 +7,7 @@ import math
 
 import gflags
 import numpy as np
+np.set_printoptions(threshold=np.nan)
 
 from spinn.util import afs_safe_logger
 from spinn.util.data import SimpleProgressBar
@@ -69,6 +70,8 @@ def evaluate(FLAGS, model, eval_set, log_entry,
     for i, dataset_batch in enumerate(dataset):
         batch = get_batch(dataset_batch)
         eval_X_batch, eval_transitions_batch, eval_y_batch, eval_num_transitions_batch, eval_ids = batch
+        logger.Log(eval_ids)
+        logger.Log(eval_transitions_batch) 
 
         # Run model.
         output = model(
@@ -80,6 +83,9 @@ def evaluate(FLAGS, model, eval_set, log_entry,
             pyramid_temperature_multiplier=pyramid_temperature_multiplier,
             store_parse_masks=show_sample,
             example_lengths=eval_num_transitions_batch)
+
+        hidden_pres = model.get_reduced_list()
+        logger.Log('\n'.join(' '.join(map(str,sl)) for sl in hidden_pres))
 
         can_sample = FLAGS.model_type in ["ChoiPyramid", "Maillard", "CatalanPyramid"] or (
             FLAGS.model_type == "SPINN" and FLAGS.use_internal_parser)
