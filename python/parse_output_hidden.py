@@ -13,6 +13,11 @@ from spinn.data.nli import load_nli_data
 
 
 def log_to_parse_dict(log_path):
+	'''
+	read a SPINN evaluation (batch size = 1) log, 
+	parse the printouts of hidden vectors to a dictionary of dictionaries
+	
+	'''
 	lines = [line.rstrip('\n') for line in open(log_path, 'r')]
 	output = {}
 
@@ -20,14 +25,12 @@ def log_to_parse_dict(log_path):
 	for line in lines:
 		if 'jpg' in line:
 			temp_jpg = re.sub(".+ |\\[|\\]|\\'", '', line)
-			#print(temp_jpg)
 			output[temp_jpg] = {}
 			output[temp_jpg]["sentence_1"] = []
 			output[temp_jpg]["sentence_2"] = []
 			output[temp_jpg]["path"] = []
 			count_path = 0
 		if len(re.findall("\\[0|\\[1|\\[2", line)) != 0:
-			#print("check: find transition")
 			if "[1 " in line:
 				output[temp_jpg]["path"].append('first')
 			if " 1]" in line:
@@ -35,13 +38,11 @@ def log_to_parse_dict(log_path):
 		if '[ ' in line:
 			count = True
 			bucket = []
-			#print("check: count True")
 		if count:
 			splited = line.split(' ')
 			for i in splited:
 				if "." in i:
 					bucket.append(float(re.sub("]", "", i)))
-					#print(len(bucket))
 			if ']' in line:
 				count = False
 				if output[temp_jpg]["path"][count_path] == 'first':
@@ -51,8 +52,12 @@ def log_to_parse_dict(log_path):
 				count_path += 1
 	return output
 		
-def print_hidden(log_dict, nli_data):
-	f = open('sp-pi-2016-correct-eval1.txt', 'w')
+def print_hidden(log_dict, nli_data, path):
+	'''
+	matching up the hidden vectors that are printed out and the labels for nodes at the binary parse
+	'''
+
+	f = open(path, 'w')
 
 	#f.write('example_id' + '\t' + 'XP_label' + '\t' + 'words' + '\t' + 'hidden' + '\n')
 	
@@ -77,7 +82,7 @@ print('sanity check')
 nli_data = load_nli_data.load_data('../../../snli_1.0/snli_1.0_dev.jsonl')
 #print(nli_data[0])
 log_dict = log_to_parse_dict('../../../logs/sp-pi-2016-correct-eval1.log')
-print_hidden(log_dict, nli_data)
+print_hidden(log_dict, nli_data, 'sp-pi-2016-correct-eval1.txt')
 
 
 

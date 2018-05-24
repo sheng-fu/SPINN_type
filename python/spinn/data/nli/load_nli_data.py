@@ -35,6 +35,11 @@ def convert_binary_bracketing(parse, lowercase=False):
 
 
 def process_parse(parse):
+    '''
+	This function processes the PCFG parse, outputing a list of tuples,
+	where the first item in a tuple is the word/constituent label
+	and the second item is the word(s) for that label
+    '''
 	parse_output = ''
 	for i in range(len(parse)-1):
 		if parse[i+1] == ')':
@@ -66,12 +71,18 @@ def process_parse(parse):
 	return label_span
 	
 def return_labels(parse_output, span_list):
-	#print(span_list)
+    '''
+	this function takes ...
+	(1) the processed result of the PCFG parse 
+	(2) the list of spans of words for all nodes in the binary parse
+	and returns...
+	the list of a tuple of 
+	(1) constituent labels from the PCFG parse that match with a node in the binary pase
+	(2) words that the node spans over
+    '''
 	labels = {}
 	for i in range(len(span_list)):
-		#print(i)
 		for j in parse_output:
-			#print(j)
 			if span_list[i] == j[1]:
 				labels[i] = (j[0], span_list[i])
 				break
@@ -80,18 +91,19 @@ def return_labels(parse_output, span_list):
 
     
 def convert_binary_bracketing_span(parse, lowercase=False):
+    '''
+	this function takes in the binary parse 
+	and return a list of spans of words for all nodes in the binary parse
+	'''
     spans = []
-
-
     for i in range(len(parse.split(' '))):
         if parse.split(' ')[i] != "(":
             if parse.split(' ')[i] == ")":
                 paren_count = 1
-                #print(paren_count)
                 span_temp = parse.split(' ')[:i]
                 for j in reversed(range(len(span_temp))):
                     if span_temp[j] == ")":
-                        paren_count += 1; #print(span_temp)
+                        paren_count += 1; 
                     if span_temp[j] == "(":
                         paren_count = paren_count-1
                     if paren_count == 0:
@@ -127,6 +139,7 @@ def load_data(path, lowercase=False, choose=lambda x: True, eval_mode=False):
                     loaded_example["sentence1_binary_parse"], lowercase=lowercase)
                 (example["hypothesis_tokens"], example["hypothesis_transitions"]) = convert_binary_bracketing(
                     loaded_example["sentence2_binary_parse"], lowercase=lowercase)
+				#below are the new additions to prepare for extracting hidden representations
                 example['sentence_1_spans'] = convert_binary_bracketing_span(loaded_example['sentence1_binary_parse'])
                 example['sentence_2_spans'] = convert_binary_bracketing_span(loaded_example['sentence2_binary_parse'])
                 example['sentence_1_labels'] = return_labels(process_parse(loaded_example['sentence1_parse']), example['sentence_1_spans'])

@@ -84,6 +84,7 @@ def evaluate(FLAGS, model, eval_set, log_entry,
             store_parse_masks=show_sample,
             example_lengths=eval_num_transitions_batch)
 
+        #get and print hidden vectors in the logging file
         hidden_pres = model.get_reduced_list()
         logger.Log('\n'.join(' '.join(map(str,sl)) for sl in hidden_pres))
 
