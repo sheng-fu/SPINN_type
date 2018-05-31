@@ -61,7 +61,7 @@ def plot_confusion_matrix(cm, classes,
 
 output_f = open('SPINN_output_with_linear_multi_1.txt', 'w')
 
-def Dictionary():
+def Dictionary(dim=576):
 	d=[]
 	with open("sp-pi-2016-correct-eval1.txt", "r") as f:
 		for line in f:
@@ -70,9 +70,8 @@ def Dictionary():
 			example['example_id'] = values[0]
 			example['XP_label'] = values[1]
 			example['words'] = re.sub("\\[|\\]|\\'|,", '', values[2].lower()).split(' ')
-			example['hidden'] = [float(x) for x in re.sub("\\[|\\]|\\'|,", '', values[3].lower()).split(' ')]
-			if len(example['hidden']) == 600:
-				d.append(example)
+			example['hidden'] = [float(x) for x in re.sub("\\[|\\]|\\'|,", '', values[3].lower()).split(' ')][:dim]
+			d.append(example)
             
     #return {}
     #You want to return the created dictionary
@@ -87,7 +86,7 @@ def Dictionary():
 #    embeddings_index[word] = coefs
 #f.close()
 
-data_for_classifier = Dictionary()
+data_for_classifier = Dictionary(dim=576)
 
 
 
@@ -115,71 +114,72 @@ y_train = labels_for_classifier[:thres]
 x_test = input_for_classifier[thres:]
 y_test = labels_for_classifier[thres:]
 
-output_f.write(str(thres) + '\n')
-output_f.write(str(len(data_for_classifier)) + '\n')
-output_f.write(str(len(x_test)) + '\n')
-output_f.write(str(len(y_test)) + '\n')
+#output_f.write(str(thres) + '\n')
+#output_f.write(str(len(data_for_classifier)) + '\n')
+#output_f.write(str(len(x_test)) + '\n')
+#output_f.write(str(len(y_test)) + '\n')
 
-
-
-
-output_f.write('linear classifier' + '\n')
+#output_f.write('linear classifier' + '\n')
 
 clf = linear_model.LogisticRegression(multi_class='multinomial', solver = 'sag')
 clf.fit(x_train, y_train)
 
-output_f.write(str(Counter(y_train)))
-output_f.write('\n')
-output_f.write(str(Counter(y_test)))
-output_f.write('\n')
+#output_f.write(str(Counter(y_train)))
+#output_f.write('\n')
+#output_f.write(str(Counter(y_test)))
+#output_f.write('\n')
 
+output_f.write('Train:')
+output_f.write('\n')
 output_f.write(str(clf.score(x_train,y_train)))
+output_f.write('\n')
+output_f.write('Test:')
 output_f.write('\n')
 output_f.write(str(clf.score(x_test,y_test)))
 output_f.write('\n')
 
-ix_to_label = {v:k[1:] for k,v in label_to_ix.items()}
+#ix_to_label = {v:k[1:] for k,v in label_to_ix.items()}
 
 #index_8_class = [x for x in list(range(len(y_test))) if y_test[x] in list(range(0,8))]
-y_test = [x if x in list(range(0,8)) else 8 for x in y_test]
+#y_test = [x if x in list(range(0,8)) else 8 for x in y_test]
 #x_test_8_class = [x_test[x] for x in list(range(len(x_test))) if x in index_8_class]
 
-pred_test = clf.predict(x_test)
-pred_test = [x if x in list(range(0,8)) else 8 for x in pred_test ]
+#pred_test = clf.predict(x_test)
+#pred_test = [x if x in list(range(0,8)) else 8 for x in pred_test ]
 
 #y_test_label = [ix_to_label[x] if x in list(range(0,8)) else 'other' for x in y_test ]
 #pred_test_label = [ix_to_label[x] if x in list(range(0,8)) else 'other' for x in pred_test ]
 
 
-linear_conf = confusion_matrix(y_test, pred_test)
-plot_confusion_matrix(linear_conf, classes=list(ix_to_label.values())[:8]+['other'], normalize=True,
-                      title='Normalized confusion matrix', output = "Linear_SPINN_8_class.png")
+#linear_conf = confusion_matrix(y_test, pred_test)
+#plot_confusion_matrix(linear_conf, classes=list(ix_to_label.values())[:8]+['other'], normalize=True,
+#                      title='Normalized confusion matrix', output = "Linear_SPINN_8_class.png")
 
-mlp = MLPClassifier(hidden_layer_sizes=(100),solver='sgd',learning_rate_init=0.002,max_iter=500)
+#mlp = MLPClassifier(hidden_layer_sizes=(100),solver='sgd',learning_rate_init=0.002,max_iter=500)
 
 #output_f.write(y_train)
 #output_f.write(y_test)
 
-mlp.fit(x_train, y_train)
+#mlp.fit(x_train, y_train)
 
-output_f.write(str(mlp.score(x_train,y_train)))
-output_f.write('\n')
-output_f.write(str(mlp.score(x_test,y_test)))
-output_f.write('\n')
-output_f.write(str(Counter(y_train)))
-output_f.write('\n')
-output_f.write(str(Counter(y_test)))
-output_f.write('\n')
+#output_f.write(str(mlp.score(x_train,y_train)))
+#output_f.write('\n')
+#output_f.write(str(mlp.score(x_test,y_test)))
+#output_f.write('\n')
+#output_f.write(str(Counter(y_train)))
+#output_f.write('\n')
+#output_f.write(str(Counter(y_test)))
+#output_f.write('\n')
 
-output_f.close()
+#output_f.close()
 
 		
-pred_test = mlp.predict(x_test)
-pred_test = [x if x in list(range(0,8)) else 8 for x in pred_test ]
+#pred_test = mlp.predict(x_test)
+#pred_test = [x if x in list(range(0,8)) else 8 for x in pred_test ]
 
-linear_conf = confusion_matrix(y_test, pred_test)
-plot_confusion_matrix(linear_conf, classes=list(ix_to_label.values())[:8]+['other'], normalize=True,
-                      title='Normalized confusion matrix', output = "MLP_SPINN_8_class.png")
+#linear_conf = confusion_matrix(y_test, pred_test)
+#plot_confusion_matrix(linear_conf, classes=list(ix_to_label.values())[:8]+['other'], normalize=True,
+#                      title='Normalized confusion matrix', output = "MLP_SPINN_8_class.png")
 		
 
 

@@ -83,6 +83,7 @@ class LMS(nn.Module):
                 "All sentences (including cropped) must be the appropriate length."
 
         self.bufs = example.bufs
+        self.reduced_list = []
 
         # Notes on adding zeros to bufs/stacks.
         # - After the buffer is consumed, we need one zero on the buffer
@@ -226,6 +227,8 @@ class LMS(nn.Module):
             for stack in stacks:
                 new_stack_item = next(reduced)
                 stack.append(new_stack_item)
+				#saving the hidden vectors    
+                self.reduced_list.append(new_stack_item.cpu().data.numpy())  
 
     def reduce_phase_hook(self, lefts, rights, trackings, reduce_stacks):
         pass
@@ -586,3 +589,6 @@ class BaseModel(nn.Module):
         h_premise = self.extract_h(self.wrap_items(items[:batch_size]))
         h_hypothesis = self.extract_h(self.wrap_items(items[batch_size:]))
         return [h_premise, h_hypothesis]
+		
+    def get_reduced_list(self):
+        return self.lms.reduced_list
